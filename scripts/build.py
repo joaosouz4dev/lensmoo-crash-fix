@@ -162,6 +162,22 @@ def patch_preview_bridge(text):
     return text + "\n\n" + alias + keep_ready
 
 
+def patch_album_bridge(text):
+    """Refresh local recordings when the existing album becomes visible."""
+    for signature in ["public onResume()V", "public onHiddenChanged(Z)V"]:
+        start = text.index(".method " + signature)
+        end = text.index("\n.end method", start)
+        body = text[start:end]
+        hook = "    invoke-static {p0}, Ldev/lensfix/video/AlbumSupport;->refresh(Ljava/lang/Object;)V\n\n"
+        if "onHiddenChanged" in signature:
+            hook = "    if-nez p1, :lensfix_album_hidden\n" + hook + "    :lensfix_album_hidden\n\n"
+        if body.count("    .line 1\n") != 1:
+            raise ValueError("Unexpected album lifecycle body")
+        body = body.replace("    .line 1\n", hook + "    .line 1\n", 1)
+        text = text[:start] + body + text[end:]
+    return text
+
+
 def compile_video_helper(java_home, sdk_tools, android_jar, staging):
     if not android_jar.is_file():
         raise ValueError("Android platform JAR not found: " + str(android_jar))
@@ -205,6 +221,8 @@ def build(args):
     target.write_text(patch_dex(target.read_text(encoding="utf-8")), encoding="utf-8")
     preview = decoded / "smali_classes5/com/lensmoo/business/ui/main/MainFragment.smali"
     preview.write_text(patch_preview_bridge(preview.read_text(encoding="utf-8")), encoding="utf-8")
+    album = decoded / "smali_classes5/com/lensmoo/business/ui/photo/PhotoLibraryFragment.smali"
+    album.write_text(patch_album_bridge(album.read_text(encoding="utf-8")), encoding="utf-8")
     helper = compile_video_helper(args.java_home, sdk_tools,
                                   args.sdk / "platforms" / args.android_platform / "android.jar", staging)
     dex = staging / "classes5.dex"
@@ -276,6 +294,7 @@ def build(args):
                 "sourceApks": INPUTS, "tools": {name: checksum for name, (_, checksum) in TOOLS.items()},
                 "repair": "StarBurstSdk$a.onFailure uses Handler(Looper.getMainLooper())",
                 "video": "Type-2 framed AVC preview, serialized Surface decoder, explicit local MP4 recording using MediaMuxer/MediaStore",
+                "album": "Own-app finalized MediaStore videos shown in the existing album, without modifying the photo database",
                 "addedDex": {"file": "classes8.dex", "sha256": digest(helper.read_bytes()), "source": "android/src/dev/lensfix/video"},
                 "unchangedDex": ["classes.dex", "classes2.dex", "classes3.dex", "classes4.dex", "classes6.dex", "classes7.dex"],
                 "executableAndAssetEntriesVerified": checked, "signatureVerified": True, "zipAlignment16KBVerified": True,

@@ -38,6 +38,8 @@ This end-to-end recording used a private diagnostic candidate with metadata-only
 | Diagnostic live-preview capture | Valid silent H.264 320x240 MP4, 10 seconds, 295 distinct decoded frames; rebuilt on computer and copied to the phone |
 | 1.1 native preview | Installed on the same phone; serialized decoder reported rendered output at 320x240 and the new recording control appeared; 30-second observation detected no crash |
 | Direct MP4 recording through the new app button | Phone-generated 14.12-second silent MP4, 320x240; all 427 frames decoded and distinct; owner confirmed playback opened |
+| Local video section inside LensFix album | Device UI displayed two own-app recordings with thumbnails, duration, resolution, playback actions, and a complete-list action; existing two photos remained visible |
+| Higher video quality / native recording | Not obtained. Known native recording control tested with preview active and closed; media counts remained zero. A stop acknowledgement does not establish successful native recording. See [quality investigation](VIDEO-QUALITY-RESEARCH.md) |
 | Other Android versions, architectures, phones or firmware | Not validated |
 
 The earlier SDK's 23 passing Python protocol tests concern that independent SDK, not this vendor-app hotfix. They are not counted as LensFix application regression coverage. Short successful observations are evidence for the reproduced failure path, not a guarantee that the whole app is defect-free.

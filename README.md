@@ -39,9 +39,10 @@ On the tested firmware 1.0.2 unit, the owner confirmed that **two short presses 
 1. Open the connected **device** screen and tap the play icon in the camera area.
 2. Wait for the preview and **Gravar vídeo** button.
 3. Tap **Gravar vídeo** to start. Tap the same control, now showing **Parar** and elapsed time, to stop and save.
-4. Find the MP4 in **Internal storage > Movies > LensFix** using the phone's file manager. Photo/gallery apps may also show a LensFix device folder.
+4. Open **album > Vídeos gravados** in LensFix and tap a thumbnail to play it. **Ver todos** lists older recordings.
+5. The MP4 is already saved in **Internal storage > Movies > LensFix**, also accessible through the phone's file manager or photo/gallery app.
 
-Keep the app open while recording. The MP4 is created on the phone, so there is no later glasses download step. This records the received Bluetooth preview; it does not retrieve older videos from glasses storage. Low resolution and no audio are limits of the validated stream. See [tested controls and evidence](docs/VIDEO-RESEARCH.md).
+Keep the app open while recording. The MP4 is created on the phone, so there is no later glasses download step. This records the received Bluetooth preview; it does not retrieve older videos from glasses storage. **Quality is low: 320x240, without audio.** A higher-resolution video stream or file has not been obtained from this unit. See [tested controls and evidence](docs/VIDEO-RESEARCH.md) and [video-quality research](docs/VIDEO-QUALITY-RESEARCH.md).
 
 For **photos**, open the LensFix **album**, open the image, and tap the lower-left save/download icon. The tested photo was exported to Android `Pictures/`.
 

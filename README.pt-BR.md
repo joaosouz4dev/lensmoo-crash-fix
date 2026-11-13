@@ -38,9 +38,10 @@ O **LensFix 1.1.0** acrescenta gravação da **prévia ao vivo em 320x240, sem �
 1. Abra **dispositivo**, com os óculos conectados, e toque no ícone de reproduzir na área da câmera.
 2. Espere aparecer a prévia e o botão **Gravar vídeo**.
 3. Toque em **Gravar vídeo**. Para terminar, toque no mesmo botão, que passa a mostrar **Parar** e o tempo.
-4. O MP4 é salvo em **Armazenamento interno > Movies > LensFix**. Abra essa pasta pelo gerenciador de arquivos do celular. Ele também pode aparecer no aplicativo de fotos/galeria, na pasta LensFix.
+4. Abra **álbum > Vídeos gravados** no LensFix e toque na miniatura para reproduzir. **Ver todos** lista as gravações anteriores.
+5. O MP4 já está salvo em **Armazenamento interno > Movies > LensFix**. Essa pasta também pode ser aberta pelo gerenciador de arquivos ou pelo aplicativo de fotos/galeria do celular.
 
-Mantenha o app aberto durante a gravação. O arquivo já é criado no celular; não é necessário baixá-lo dos óculos depois. Essa função grava a prévia recebida por Bluetooth e não recupera vídeos antigos armazenados nos óculos. A resolução e a ausência de áudio são limites do fluxo validado. Consulte [os testes e a pesquisa sobre vídeo](docs/VIDEO-RESEARCH.md).
+Mantenha o app aberto durante a gravação. O arquivo já é criado no celular; não é necessário baixá-lo dos óculos depois. Essa função grava a prévia recebida por Bluetooth e não recupera vídeos antigos armazenados nos óculos. **A qualidade é baixa: 320x240, sem áudio.** Ainda não foi obtido um fluxo ou arquivo de vídeo com resolução maior nesta unidade. Consulte [os testes de vídeo](docs/VIDEO-RESEARCH.md) e [a pesquisa de qualidade](docs/VIDEO-QUALITY-RESEARCH.md).
 
 Para salvar uma **foto**, abra **álbum** no LensFix, abra a imagem e toque no ícone de salvar/download no canto inferior esquerdo. No teste ela foi exportada para `Pictures/`.
 
