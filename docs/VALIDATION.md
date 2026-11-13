@@ -12,13 +12,15 @@ The same callback used the main Looper. The vendor VAD invalid-key response stil
 
 ## Standalone release APK
 
-The public build combines the same arm64 app and language/density splits into one APK so a user can install it directly. Its build manifest records source hashes, pinned tool hashes, output SHA-256, public signing-certificate fingerprint, signature verification, ZIP alignment verification, and unchanged executable/asset checks. Device-installation results for this release are recorded in the accompanying `validation.json` release asset.
+The public build combines the same arm64 app and language/density splits into one APK so a user can install it directly. Its build manifest records source hashes, pinned tool hashes, output SHA-256, public signing-certificate fingerprint, signature verification, ZIP alignment verification, and unchanged executable/asset checks.
+
+After reconnecting USB, the installed standalone APK's SHA-256 was checked against the published release and matched exactly. The app was stopped and relaunched; it reached the main activity and stayed running through a 30-second process observation with no detected crash. The StarBurst `4003 ERROR_INVALID_KEY` callback continued occurring, exercising the error path that terminated the original application. The earlier interrupted observation is superseded by this completed check. Results are recorded in the updated `validation.json` release asset. No APK code or binary was changed for this documentation update.
 
 ## What these tests do not establish
 
 | Function | Result |
 | --- | --- |
-| Original fatal Handler callback | Reproduced, then repaired on the tested device |
+| Original fatal Handler callback | Reproduced, then repaired on the tested device; standalone release APK rechecked after relaunch |
 | Bluetooth connection with XK One Pro | Owner confirmed on the repaired split build |
 | Long-term stability and background operation | Not established |
 | StarBurst voice-service authentication | Still returns invalid key; repeated retries remain |
