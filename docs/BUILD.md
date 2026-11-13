@@ -1,6 +1,6 @@
 # Build LensFix from a supported local Lensmoo installation
 
-Requirements: Python 3.10+, Java/JDK 17+, Android SDK Platform Tools, and Build Tools 37.0.0. Windows was used for the release build. Paths are explicit so the script can also be used with equivalent Linux/macOS SDK installations; those hosts have not been tested.
+Requirements: Python 3.10+, Java/JDK 17+, Android SDK Platform Tools, platform `android-36`, and Build Tools 37.0.0. Windows was used for the release build. Paths are explicit so the script can also be used with equivalent Linux/macOS SDK installations; those hosts have not been tested.
 
 ## 1. Obtain your original APKs
 
@@ -28,7 +28,7 @@ python scripts/build.py `
 
 `--download-tools` obtains Apktool 3.0.3 and APKEditor 1.4.9 from their official GitHub releases and verifies pinned checksums. Without the flag, place those exact JARs in `work/tools/` yourself. Android SDK tools are installed separately, not by this script.
 
-The script starts from a fresh temporary build directory, modifies the one known Handler call, and compiles only `classes5.dex`. It then changes the package/provider identity and launcher name, merges the six APKs into one arm64 APK, aligns and signs it. All six other DEX files, native libraries and assets are compared with the originals after packaging. Resources and split-installation metadata must be combined for standalone installation.
+The script starts from a fresh temporary build directory, modifies the known Handler call and preview/lifecycle hooks in `classes5.dex`, and compiles the project's original Java video helper into `classes8.dex` using javac and D8. It then changes the package/provider identity and launcher name, merges the six APKs into one arm64 APK, aligns and signs it. All six other original DEX files, native libraries and assets are compared with the originals after packaging. The added helper DEX is also checked against the compiled output. Resources and split-installation metadata must be combined for standalone installation.
 
 Output:
 
@@ -65,3 +65,9 @@ new Handler(Looper.getMainLooper()).postDelayed(retry, 500);
 ```
 
 See [Android's Handler reference](https://developer.android.com/reference/android/os/Handler). The repair does not alter the vendor's keys, account service, license checks, or retry policy. The continuing invalid-key retries are a documented limitation.
+
+## Video helper
+
+`android/src/dev/lensfix/video` contains original source for the observed preview path. It validates a type-2 packet with a little-endian payload length, removes its five-byte envelope, reads Annex-B H.264 parameters, and runs one serialized decoder. Other payload types retain the vendor path. The explicit recording button writes encoded preview frames to an MP4 in Android MediaStore, under `Movies/LensFix`, without audio or automatic capture. Leaving the device screen finalizes an active recording. This captures the current preview; it does not download older recordings from glasses storage.
+
+Run `python -m unittest discover -s tests -v` with Java 17+ available through `JAVA_HOME`. The parser tests use generated, non-camera fixtures. Device validation must additionally confirm a rendered preview and decode a newly saved MP4; unit tests alone do not validate Android codec, lifecycle, or MediaStore behavior. See [the API research](RECORDING-API-RESEARCH.md) and [validation status](VALIDATION.md).

@@ -28,10 +28,13 @@ After reconnecting USB, the installed standalone APK's SHA-256 was checked again
 | Photo export to Android gallery | Owner confirmed Save; MediaStore entries in `Pictures/`, exported JPEG 1280x960, 580969 bytes; file decoded successfully |
 | Right-front physical button double press | Owner reports voice recording; the app's built-in operation guide agrees |
 | Diagnostic live-preview capture | Valid silent H.264 320x240 MP4, 10 seconds, 295 distinct decoded frames; rebuilt on computer and copied to the phone |
+| Candidate 1.1 native preview | Installed on the same phone; serialized decoder reported rendered output at 320x240 and the new recording control appeared; 30-second observation detected no crash |
 | Direct MP4 recording through the new app button | Implementation in development, device validation pending; see [video research](VIDEO-RESEARCH.md) |
 | Other Android versions, architectures, phones or firmware | Not validated |
 
 The earlier SDK's 23 passing Python protocol tests concern that independent SDK, not this vendor-app hotfix. They are not counted as LensFix application regression coverage. Short successful observations are evidence for the reproduced failure path, not a guarantee that the whole app is defect-free.
+
+The candidate video implementation has six passing repository tests, including generated baseline/high-profile H.264 parser fixtures and cropped SPS dimensions. GitHub Actions also passed for source commit `12a0c2158780ed523bbd884fbf7f26cfe4d5a5bf`. These tests do not establish direct MediaMuxer recording success; a newly saved phone-generated clip still needs to be decoded before releasing the candidate APK.
 
 ## Tested photo export workflow
 

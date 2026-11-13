@@ -1,6 +1,6 @@
 # Third-party software and scope of the license
 
-The MIT license in this repository applies to the original repair tools and documentation authored for LensFix. It does not relicense Lensmoo, StarBurst, their SDKs, app icons, trademarks, or other third-party code contained in an Android application package. Those remain subject to their original rights and terms.
+The MIT license in this repository applies to the original repair tools, Java video helper under `android/src`, tests, and documentation authored for LensFix. It does not relicense Lensmoo, StarBurst, their SDKs, app icons, trademarks, or other third-party code contained in an Android application package. Those remain subject to their original rights and terms.
 
 LensFix is an independent, unofficial interoperability repair. It is not a vendor release or an endorsement by Lensmoo, StarBurst, Shenju, Xunke, Samsung, or Google. Vendor account, purchase, license, and service-authentication checks are not bypassed. The original app's network behavior and account requirements remain.
 
