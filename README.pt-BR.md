@@ -33,22 +33,29 @@ O APK usa a base Lensmoo **1.8.0, código 80**, com bibliotecas arm64, recursos 
 
 Na unidade testada, com firmware 1.0.2, o proprietário confirmou que **duas pressões curtas no botão físico direito iniciam gravação de voz, e não vídeo**. A instrução de vídeo do guia comercial dessa família não corresponde ao comportamento dessa unidade.
 
-O firmware informou `noStorageDevice: 1`, e o app oculta os controles de vídeo armazenado. Um diagnóstico posterior confirmou uma **prévia H.264 de 320x240** e permitiu reconstruir no computador um MP4 de dez segundos, sem áudio, com 295 quadros distintos, depois copiado ao celular.
+O **LensFix 1.1.0** acrescenta gravação da **prévia ao vivo em 320x240, sem áudio**, diretamente no celular. Um teste gerou um MP4 de 14,12 segundos com 427 quadros distintos, decodificados sem erro. O proprietário confirmou que o arquivo abriu no celular.
 
-A gravação diretamente por um novo botão do app está em desenvolvimento e depende de validação no aparelho. A versão publicada **1.0.0** continua sendo a correção original de encerramento. Consulte [os testes e a pesquisa sobre vídeo](docs/VIDEO-RESEARCH.md).
+1. Abra **dispositivo**, com os óculos conectados, e toque no ícone de reproduzir na área da câmera.
+2. Espere aparecer a prévia e o botão **Gravar vídeo**.
+3. Toque em **Gravar vídeo**. Para terminar, toque no mesmo botão, que passa a mostrar **Parar** e o tempo.
+4. O MP4 é salvo em **Armazenamento interno > Movies > LensFix**. Abra essa pasta pelo gerenciador de arquivos do celular. Ele também pode aparecer no aplicativo de fotos/galeria, na pasta LensFix.
+
+Mantenha o app aberto durante a gravação. O arquivo já é criado no celular; não é necessário baixá-lo dos óculos depois. Essa função grava a prévia recebida por Bluetooth e não recupera vídeos antigos armazenados nos óculos. A resolução e a ausência de áudio são limites do fluxo validado. Consulte [os testes e a pesquisa sobre vídeo](docs/VIDEO-RESEARCH.md).
+
+Para salvar uma **foto**, abra **álbum** no LensFix, abra a imagem e toque no ícone de salvar/download no canto inferior esquerdo. No teste ela foi exportada para `Pictures/`.
 
 ## O que ainda não foi resolvido
 
 - O serviço StarBurst pode continuar repetindo o erro `ERROR_INVALID_KEY`. A correção de encerramento não remove essas tentativas nem recupera o serviço.
 - Uma foto de teste foi capturada, transferida ao app e salva na galeria do Android em `Pictures/`. O JPEG exportado abriu corretamente. Voz e estabilidade prolongada em segundo plano ainda precisam de validação completa.
-- O LensFix não acrescenta gravação de vídeo, exportação de vídeo ou atualização de firmware.
+- A gravação de vídeo cobre a prévia ao vivo, sem áudio e em baixa resolução. Recuperação de vídeos antigos dos óculos, maior resolução, áudio no MP4 e operação prolongada em segundo plano não foram validados.
 - Esta é uma versão independente, assinada separadamente, sem vínculo oficial com Lensmoo ou com o fabricante.
 
 ## Código aberto e reprodução da correção
 
 As ferramentas e a documentação deste repositório são abertas sob MIT. O aplicativo Lensmoo e seus componentes de terceiros mantêm seus próprios direitos: o app do fornecedor não se torna código aberto por causa desta correção. Leia [os avisos de terceiros](THIRD_PARTY_NOTICES.md).
 
-O [script de build](scripts/build.py) confere os hashes dos APKs originais, modifica a instrução identificada, recompila somente um DEX e preserva os demais DEX, bibliotecas nativas e assets. A assinatura e o alinhamento do APK final são conferidos. As [instruções de build](docs/BUILD.md) usam APKs obtidos da sua própria instalação.
+O [script de build](scripts/build.py) confere os hashes dos APKs originais, recompila o DEX com a correção e os pontos de integração e acrescenta o [código Java aberto de vídeo](android/src/dev/lensfix/video). Os demais DEX originais, bibliotecas nativas e assets são preservados e conferidos. A assinatura e o alinhamento do APK final também são verificados. As [instruções de build](docs/BUILD.md) usam APKs obtidos da sua própria instalação.
 
 Crédito ao [XK One Pro SDK, de Gustavo Beneduzi](https://github.com/beneduzi/xk-one-pro-sdk), pela investigação independente dos óculos e do protocolo.
 

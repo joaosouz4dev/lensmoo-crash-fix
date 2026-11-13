@@ -38,6 +38,11 @@ public final class VideoSupport {
 
     public static boolean handles(byte[] bytes) { return PreviewPayload.parse(bytes) != null; }
 
+    /** A TextureView may have only one decoder producer at a time. */
+    public static boolean ownsPreview(Object fragment) {
+        synchronized (SESSIONS) { return SESSIONS.containsKey(fragment); }
+    }
+
     /** True means the packet belongs to the supported video path, including offscreen drops. */
     public static boolean accept(Object fragment, byte[] bytes) {
         PreviewPayload.Packet packet = PreviewPayload.parse(bytes);

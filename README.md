@@ -34,20 +34,29 @@ The release is based on Lensmoo **1.8.0, versionCode 80**, includes arm64 native
 
 On the tested firmware 1.0.2 unit, the owner confirmed that **two short presses of the right physical button start voice recording, not video**. The product-family guide's video gesture does not match this unit. The firmware reports `noStorageDevice: 1`, and the app hides stored-video controls.
 
-A later diagnostic confirmed a **320x240 live H.264 stream** and reconstructed a silent ten-second MP4 with 295 distinct frames on a computer, then copied it to the phone. Direct recording through a new app button is in development and needs device validation. Published **1.0.0** still provides the original crash repair. See [tested controls and evidence](docs/VIDEO-RESEARCH.md).
+**LensFix 1.1.0 records the live preview directly on the phone at 320x240, without audio.** A physical-device test produced a 14.12-second MP4 with 427 distinct, successfully decoded frames. The owner confirmed that the file opened on the phone.
+
+1. Open the connected **device** screen and tap the play icon in the camera area.
+2. Wait for the preview and **Gravar vídeo** button.
+3. Tap **Gravar vídeo** to start. Tap the same control, now showing **Parar** and elapsed time, to stop and save.
+4. Find the MP4 in **Internal storage > Movies > LensFix** using the phone's file manager. Photo/gallery apps may also show a LensFix device folder.
+
+Keep the app open while recording. The MP4 is created on the phone, so there is no later glasses download step. This records the received Bluetooth preview; it does not retrieve older videos from glasses storage. Low resolution and no audio are limits of the validated stream. See [tested controls and evidence](docs/VIDEO-RESEARCH.md).
+
+For **photos**, open the LensFix **album**, open the image, and tap the lower-left save/download icon. The tested photo was exported to Android `Pictures/`.
 
 ## Known limitations
 
 - StarBurst can continue returning `ERROR_INVALID_KEY` and retrying initialization. This release prevents the observed fatal thread error; it does not restore the vendor voice service or remove its retries.
 - A test photo was captured, transferred into the app, and saved to the Android gallery under `Pictures/`. The exported JPEG decoded successfully. Voice features and long-term background stability have not been verified end to end.
-- This release does not implement video recording, video export, firmware updates, or new glasses protocols.
+- Video capture covers the silent, low-resolution live preview. Retrieving older glasses recordings, higher resolutions, audio in the MP4, and prolonged background operation are not validated.
 - It is independently signed and uses a different package. It is not an official Lensmoo update and is not distributed through Google Play.
 
 ## Open repair tools
 
-The [Python build tool](scripts/build.py) checks exact original-APK hashes, applies the targeted patch, assembles only `classes5.dex`, preserves the six other DEX files and native libraries, merges the splits, and verifies the final signature, 16 KB ZIP alignment, executable content, and assets. Tools are pinned by SHA-256. See [building from your own APKs](docs/BUILD.md).
+The [Python build tool](scripts/build.py) checks exact original-APK hashes, applies the repair and integration hooks in `classes5.dex`, and compiles the [original Java video helper](android/src/dev/lensfix/video) into `classes8.dex`. It preserves the six other original DEX files and native libraries, merges the splits, and verifies the final signature, 16 KB ZIP alignment, executable content, and assets. Tools are pinned by SHA-256. See [building from your own APKs](docs/BUILD.md).
 
-The vendor app's source is not open source. The MIT license covers this repository's original repair tools and documentation only. See [third-party notices](THIRD_PARTY_NOTICES.md). No personal account data, device logs, decompiled vendor sources, or private signing keys are committed.
+The vendor app's source is not open source. The MIT license covers this repository's original repair tools, Java video helper, tests, and documentation. See [third-party notices](THIRD_PARTY_NOTICES.md). No personal account data, device logs, decompiled vendor sources, or private signing keys are committed.
 
 ## Credits and references
 

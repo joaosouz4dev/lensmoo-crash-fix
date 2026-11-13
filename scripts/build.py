@@ -109,6 +109,18 @@ def patch_preview_bridge(text):
                    "    invoke-direct {p0}, " + owner + "->lensfixReleaseLegacyDecoder()V\n"
                    "    return-void\n.end method")
     text = text[:start] + replacement + text[end:]
+    start = text.index(".method private final startDecoder()V")
+    end = text.index("\n.end method", start)
+    body = text[start:end]
+    guard = ("    invoke-static {p0}, " + bridge + "->ownsPreview(Ljava/lang/Object;)Z\n"
+             "    move-result v0\n"
+             "    if-eqz v0, :lensfix_legacy_decoder\n"
+             "    return-void\n"
+             "    :lensfix_legacy_decoder\n\n")
+    if body.count("    .line 1\n") != 1:
+        raise ValueError("Unexpected legacy decoder entry")
+    body = body.replace("    .line 1\n", guard + "    .line 1\n", 1)
+    text = text[:start] + body + text[end:]
     for signature in ["private final decodeFrame([B)V", "public onPreviewResult([B)V"]:
         start = text.index(".method " + signature)
         end = text.index("\n.end method", start)
