@@ -33,12 +33,14 @@ O APK usa a base Lensmoo **1.8.0, código 80**, com bibliotecas arm64, recursos 
 
 Na unidade testada, com firmware 1.0.2, o proprietário confirmou que **duas pressões curtas no botão físico direito iniciam gravação de voz, e não vídeo**. A instrução de vídeo do guia comercial dessa família não corresponde ao comportamento dessa unidade.
 
-O firmware informou `noStorageDevice: 1`, e o app oculta os controles de vídeo armazenado. Uma transmissão ao vivo utilizável, a gravação e a recuperação de vídeos ainda não foram verificadas no LensFix. Consulte [os testes e a pesquisa sobre vídeo](docs/VIDEO-RESEARCH.md) antes de contar com esse recurso.
+O firmware informou `noStorageDevice: 1`, e o app oculta os controles de vídeo armazenado. Um diagnóstico posterior confirmou uma **prévia H.264 de 320x240** e permitiu reconstruir no computador um MP4 de dez segundos, sem áudio, com 295 quadros distintos, depois copiado ao celular.
+
+A gravação diretamente por um novo botão do app está em desenvolvimento e depende de validação no aparelho. A versão publicada **1.0.0** continua sendo a correção original de encerramento. Consulte [os testes e a pesquisa sobre vídeo](docs/VIDEO-RESEARCH.md).
 
 ## O que ainda não foi resolvido
 
 - O serviço StarBurst pode continuar repetindo o erro `ERROR_INVALID_KEY`. A correção de encerramento não remove essas tentativas nem recupera o serviço.
-- Uma foto de teste foi capturada e transferida ao álbum interno do app. A exportação para a galeria do Android, voz e estabilidade prolongada em segundo plano ainda precisam de validação completa.
+- Uma foto de teste foi capturada, transferida ao app e salva na galeria do Android em `Pictures/`. O JPEG exportado abriu corretamente. Voz e estabilidade prolongada em segundo plano ainda precisam de validação completa.
 - O LensFix não acrescenta gravação de vídeo, exportação de vídeo ou atualização de firmware.
 - Esta é uma versão independente, assinada separadamente, sem vínculo oficial com Lensmoo ou com o fabricante.
 

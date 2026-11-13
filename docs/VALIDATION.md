@@ -25,9 +25,14 @@ After reconnecting USB, the installed standalone APK's SHA-256 was checked again
 | Long-term stability and background operation | Not established |
 | StarBurst voice-service authentication | Still returns invalid key; repeated retries remain |
 | Photo capture and transfer into the app | Test capture confirmed; app album increased from one to two photos |
-| Photo export to Android gallery | Not yet verified |
+| Photo export to Android gallery | Owner confirmed Save; MediaStore entries in `Pictures/`, exported JPEG 1280x960, 580969 bytes; file decoded successfully |
 | Right-front physical button double press | Owner reports voice recording; the app's built-in operation guide agrees |
-| Video capture and video export | Not validated; see [video research](VIDEO-RESEARCH.md) |
+| Diagnostic live-preview capture | Valid silent H.264 320x240 MP4, 10 seconds, 295 distinct decoded frames; rebuilt on computer and copied to the phone |
+| Direct MP4 recording through the new app button | Implementation in development, device validation pending; see [video research](VIDEO-RESEARCH.md) |
 | Other Android versions, architectures, phones or firmware | Not validated |
 
 The earlier SDK's 23 passing Python protocol tests concern that independent SDK, not this vendor-app hotfix. They are not counted as LensFix application regression coverage. Short successful observations are evidence for the reproduced failure path, not a guarantee that the whole app is defect-free.
+
+## Tested photo export workflow
+
+Open **álbum**, open the newly captured photo, and tap the save/download icon at the lower left. On the tested phone the file was saved under `Pictures/` and registered as `image/jpeg` in Android MediaStore. The exported test image decoded as 1280x960; this is an exported-file measurement and does not establish the camera sensor's native resolution. The test image and device logs are kept private.
