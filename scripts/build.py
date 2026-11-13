@@ -95,6 +95,81 @@ def patch_dex(text):
     return text.replace(OLD_CALL, NEW_CALL)
 
 
+def patch_preview_bridge(text):
+    """Keep legacy behavior for other payloads; intercept the observed framed AVC path."""
+    owner = "Lcom/lensmoo/business/ui/main/MainFragment;"
+    bridge = "Ldev/lensfix/video/VideoSupport;"
+    stop_signature = ".method private final stopDecoder()V"
+    start = text.index(stop_signature)
+    end = text.index("\n.end method", start) + len("\n.end method")
+    original_stop = text[start:end]
+    alias = original_stop.replace(stop_signature, ".method private final lensfixReleaseLegacyDecoder()V", 1)
+    replacement = (stop_signature + "\n    .locals 0\n\n"
+                   "    invoke-static {p0}, " + bridge + "->stop(Ljava/lang/Object;)V\n"
+                   "    invoke-direct {p0}, " + owner + "->lensfixReleaseLegacyDecoder()V\n"
+                   "    return-void\n.end method")
+    text = text[:start] + replacement + text[end:]
+    for signature in ["private final decodeFrame([B)V", "public onPreviewResult([B)V"]:
+        start = text.index(".method " + signature)
+        end = text.index("\n.end method", start)
+        body = text[start:end]
+        hook = ("    invoke-static {p1}, " + bridge + "->handles([B)Z\n"
+                "    move-result v0\n"
+                "    if-eqz v0, :lensfix_original_preview\n"
+                "    invoke-direct {p0}, " + owner + "->lensfixKeepPreviewReady()V\n"
+                "    invoke-static {p0, p1}, " + bridge + "->accept(Ljava/lang/Object;[B)Z\n"
+                "    move-result v0\n"
+                "    return-void\n"
+                "    :lensfix_original_preview\n\n")
+        if body.count("    .line 1\n") != 1:
+            raise ValueError("Unexpected preview callback body")
+        body = body.replace("    .line 1\n", hook + "    .line 1\n", 1)
+        text = text[:start] + body + text[end:]
+    for signature in ["public onStop()V", "public onDestroy()V", "public onHiddenChanged(Z)V"]:
+        start = text.index(".method " + signature)
+        end = text.index("\n.end method", start)
+        body = text[start:end]
+        hook = "    invoke-static {p0}, " + bridge + "->stop(Ljava/lang/Object;)V\n\n"
+        if "onHiddenChanged" in signature:
+            hook = ("    if-eqz p1, :lensfix_visible\n" + hook + "    :lensfix_visible\n\n")
+        if body.count("    .line 1\n") != 1:
+            raise ValueError("Unexpected preview lifecycle body")
+        body = body.replace("    .line 1\n", hook + "    .line 1\n", 1)
+        text = text[:start] + body + text[end:]
+    keep_ready = ("\n\n.method private final lensfixKeepPreviewReady()V\n    .locals 1\n\n"
+                  "    iget-object v0, p0, " + owner + "->disposablePreviewTimeOut:Lcom/android/mltcode/paycertificationapi/ra2;\n"
+                  "    if-eqz v0, :lensfix_timeout_done\n"
+                  "    invoke-interface {v0}, Lcom/android/mltcode/paycertificationapi/ra2;->dispose()V\n"
+                  "    const/4 v0, 0x0\n"
+                  "    iput-object v0, p0, " + owner + "->disposablePreviewTimeOut:Lcom/android/mltcode/paycertificationapi/ra2;\n"
+                  "    :lensfix_timeout_done\n"
+                  "    const/4 v0, 0x0\n"
+                  "    invoke-direct {p0, v0}, " + owner + "->enableBtn(I)V\n"
+                  "    invoke-direct {p0}, " + owner + "->lensfixReleaseLegacyDecoder()V\n"
+                  "    return-void\n.end method\n")
+    return text + "\n\n" + alias + keep_ready
+
+
+def compile_video_helper(java_home, sdk_tools, android_jar, staging):
+    if not android_jar.is_file():
+        raise ValueError("Android platform JAR not found: " + str(android_jar))
+    suffix = ".exe" if os.name == "nt" else ""
+    classes = staging / "video-classes"
+    classes.mkdir()
+    sources = sorted((ROOT / "android/src").rglob("*.java"))
+    run([java_home / ("bin/javac" + suffix), "-encoding", "UTF-8", "-source", "8", "-target", "8",
+         "-classpath", android_jar, "-d", classes, *sources])
+    archive = staging / "video-helper.jar"
+    with zipfile.ZipFile(archive, "w") as output:
+        for source in sorted(classes.rglob("*.class")):
+            output.write(source, source.relative_to(classes).as_posix())
+    target = staging / "video-dex"
+    target.mkdir()
+    run([java_home / ("bin/java" + suffix), "-cp", sdk_tools / "lib/d8.jar", "com.android.tools.r8.D8",
+         "--release", "--min-api", "26", "--lib", android_jar, "--output", target, archive])
+    return target / "classes.dex"
+
+
 def build(args):
     check_inputs(args.input)
     java = args.java_home / "bin" / ("java.exe" if os.name == "nt" else "java")
@@ -116,6 +191,10 @@ def build(args):
     run([java, "-jar", tools / "apktool.jar", "d", "-r", args.input / "base.apk", "-o", decoded])
     target = decoded / "smali_classes5/com/starburst/sdk/StarBurstSdk$a.smali"
     target.write_text(patch_dex(target.read_text(encoding="utf-8")), encoding="utf-8")
+    preview = decoded / "smali_classes5/com/lensmoo/business/ui/main/MainFragment.smali"
+    preview.write_text(patch_preview_bridge(preview.read_text(encoding="utf-8")), encoding="utf-8")
+    helper = compile_video_helper(args.java_home, sdk_tools,
+                                  args.sdk / "platforms" / args.android_platform / "android.jar", staging)
     dex = staging / "classes5.dex"
     print("Assembling repaired DEX only", flush=True)
     run([java, "-cp", tools / "apktool.jar", ROOT / "scripts/AssembleLensmooDex.java",
@@ -137,6 +216,8 @@ def build(args):
                     for label in ["Lensmoo", "LensMoo"]:
                         data = binary_string(data, label, "LensFix")
                 output.writestr(info, data)
+            if name == "base.apk":
+                output.writestr("classes8.dex", helper.read_bytes(), compress_type=zipfile.ZIP_STORED)
     print("Merging arm64 APK and language resources", flush=True)
     merged = staging / "merged.apk"
     run([java, "-jar", tools / "APKEditor.jar", "m", "-i", splits, "-o", merged])
@@ -164,6 +245,8 @@ def build(args):
     # Check executable content after merging, alignment, and signing.
     checked = 0
     with zipfile.ZipFile(apk) as final:
+        if final.read("classes8.dex") != helper.read_bytes():
+            raise ValueError("Video helper changed during packaging")
         for name in INPUTS:
             with zipfile.ZipFile(args.input / name) as original:
                 for entry in original.namelist():
@@ -175,16 +258,18 @@ def build(args):
     cert_match = re.search(r"certificate SHA-256 digest:\s*([0-9a-fA-F]{64})", certificate)
     if not cert_match:
         raise ValueError("Could not record the verified public signing certificate fingerprint")
-    manifest = {"release": "1.0.0", "upstreamVersion": "1.8.0 (80)", "package": "com.lensmoo.fix",
+    manifest = {"release": "1.1.0", "upstreamVersion": "1.8.0 (80)", "package": "com.lensmoo.fix",
                 "file": apk.name, "sha256": digest(apk.read_bytes()), "bytes": apk.stat().st_size,
                 "signerCertificateSha256": cert_match.group(1).upper(),
                 "sourceApks": INPUTS, "tools": {name: checksum for name, (_, checksum) in TOOLS.items()},
                 "repair": "StarBurstSdk$a.onFailure uses Handler(Looper.getMainLooper())",
+                "video": "Type-2 framed AVC preview, serialized Surface decoder, explicit local MP4 recording using MediaMuxer/MediaStore",
+                "addedDex": {"file": "classes8.dex", "sha256": digest(helper.read_bytes()), "source": "android/src/dev/lensfix/video"},
                 "unchangedDex": ["classes.dex", "classes2.dex", "classes3.dex", "classes4.dex", "classes6.dex", "classes7.dex"],
                 "executableAndAssetEntriesVerified": checked, "signatureVerified": True, "zipAlignment16KBVerified": True,
                 "packagingChanges": ["Separate com.lensmoo.fix package and provider authorities", "LensFix launcher label",
                                      "Merge arm64, en, es, pt, and xxhdpi splits into a standalone APK; split-only manifest metadata removed"],
-                "scope": "Crash repair only; vendor VAD invalid-key error and video functionality are not repaired"}
+                "scope": "Vendor VAD invalid-key response remains unresolved. Video records the live preview locally without audio; it does not retrieve stored glasses recordings."}
     (args.output / "build-manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     (args.output / "SHA256SUMS.txt").write_text(f"{manifest['sha256'].lower()}  {apk.name}\n", encoding="ascii")
     print(json.dumps({"apk": str(apk), "sha256": manifest["sha256"], "verifiedEntries": checked}))
@@ -196,6 +281,7 @@ def main():
     parser.add_argument("--java-home", type=Path, required=True)
     parser.add_argument("--sdk", type=Path, required=True, help="Android SDK root")
     parser.add_argument("--build-tools-version", default="37.0.0")
+    parser.add_argument("--android-platform", default="android-36")
     parser.add_argument("--work", type=Path, default=ROOT / "work")
     parser.add_argument("--output", type=Path, default=ROOT / "dist")
     parser.add_argument("--download-tools", action="store_true")
