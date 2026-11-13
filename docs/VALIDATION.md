@@ -24,7 +24,9 @@ After reconnecting USB, the installed standalone APK's SHA-256 was checked again
 | Bluetooth connection with XK One Pro | Owner confirmed on the repaired split build |
 | Long-term stability and background operation | Not established |
 | StarBurst voice-service authentication | Still returns invalid key; repeated retries remain |
-| Photo capture and gallery export | Not validated end to end |
+| Photo capture and transfer into the app | Test capture confirmed; app album increased from one to two photos |
+| Photo export to Android gallery | Not yet verified |
+| Right-front physical button double press | Owner reports voice recording; the app's built-in operation guide agrees |
 | Video capture and video export | Not validated; see [video research](VIDEO-RESEARCH.md) |
 | Other Android versions, architectures, phones or firmware | Not validated |
 

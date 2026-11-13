@@ -31,14 +31,14 @@ O APK usa a base Lensmoo **1.8.0, código 80**, com bibliotecas arm64, recursos 
 
 ## Como gravar vídeo nos XK One Pro
 
-O guia do produto orienta **duas pressões curtas no botão físico direito para iniciar** e **uma pressão curta para parar e salvar**. Não confunda com a superfície de toque, que controla música.
+Na unidade testada, com firmware 1.0.2, o proprietário confirmou que **duas pressões curtas no botão físico direito iniciam gravação de voz, e não vídeo**. A instrução de vídeo do guia comercial dessa família não corresponde ao comportamento dessa unidade.
 
-Esse comando vem do manual. A gravação e a recuperação de vídeos ainda não foram verificadas no LensFix. O projeto SDK independente não conseguiu obter vídeo armazenado ou exportá-lo por Bluetooth SPP na unidade testada. Consulte [a pesquisa sobre vídeo](docs/VIDEO-RESEARCH.md) antes de contar com esse recurso.
+O firmware informou `noStorageDevice: 1`, e o app oculta os controles de vídeo armazenado. Uma transmissão ao vivo utilizável, a gravação e a recuperação de vídeos ainda não foram verificadas no LensFix. Consulte [os testes e a pesquisa sobre vídeo](docs/VIDEO-RESEARCH.md) antes de contar com esse recurso.
 
 ## O que ainda não foi resolvido
 
 - O serviço StarBurst pode continuar repetindo o erro `ERROR_INVALID_KEY`. A correção de encerramento não remove essas tentativas nem recupera o serviço.
-- Fotos, exportação de mídia, voz e estabilidade prolongada em segundo plano ainda precisam de validação completa.
+- Uma foto de teste foi capturada e transferida ao álbum interno do app. A exportação para a galeria do Android, voz e estabilidade prolongada em segundo plano ainda precisam de validação completa.
 - O LensFix não acrescenta gravação de vídeo, exportação de vídeo ou atualização de firmware.
 - Esta é uma versão independente, assinada separadamente, sem vínculo oficial com Lensmoo ou com o fabricante.
 

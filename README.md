@@ -32,12 +32,12 @@ The release is based on Lensmoo **1.8.0, versionCode 80**, includes arm64 native
 
 ## Video recording on XK One Pro
 
-The product guide describes **two short presses of the right physical button to start video**, then **one short press to stop/save**. The touch surface is a separate control. This is a manual instruction, not a verified feature of LensFix. Independent SDK tests could not obtain stored video or video export on their tested firmware. See [video controls and evidence](docs/VIDEO-RESEARCH.md).
+On the tested firmware 1.0.2 unit, the owner confirmed that **two short presses of the right physical button start voice recording, not video**. The product-family guide's video gesture does not match this unit. The firmware reports `noStorageDevice: 1`, and the app hides stored-video controls. A usable live stream, video recording, and video export have not been established. See [tested controls and evidence](docs/VIDEO-RESEARCH.md).
 
 ## Known limitations
 
 - StarBurst can continue returning `ERROR_INVALID_KEY` and retrying initialization. This release prevents the observed fatal thread error; it does not restore the vendor voice service or remove its retries.
-- Photo capture, media export, voice features, and long-term background stability have not been verified end to end.
+- A test photo was captured and transferred into the app's internal album. Export to the Android gallery, voice features, and long-term background stability have not been verified end to end.
 - This release does not implement video recording, video export, firmware updates, or new glasses protocols.
 - It is independently signed and uses a different package. It is not an official Lensmoo update and is not distributed through Google Play.
 
