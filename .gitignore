@@ -1,0 +1,16 @@
+/work/
+/dist/
+/local-diagnostics/
+/graphify-out/
+__pycache__/
+*.pyc
+*.apk
+*.apks
+*.dex
+*.jar
+*.jks
+*.keystore
+*.idsig
+*password*.txt
+.env
+.env.*

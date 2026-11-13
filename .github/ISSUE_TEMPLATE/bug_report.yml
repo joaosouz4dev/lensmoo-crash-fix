@@ -1,0 +1,30 @@
+name: Crash or connection problem / Falha ou conexão
+description: Report a LensFix failure without posting account data.
+title: "[Bug]: "
+body:
+  - type: input
+    id: release
+    attributes:
+      label: LensFix release and Lensmoo base version
+      placeholder: LensFix 1.0.0 / Lensmoo 1.8.0
+    validations:
+      required: true
+  - type: input
+    id: hardware
+    attributes:
+      label: Phone, Android version, glasses model
+      placeholder: Samsung S23 Ultra / Android 17 / XK One Pro
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps and observed result / Passos e resultado
+      description: Include the exact failing action. Do not post passwords, verification codes, account identifiers, or raw device logs.
+    validations:
+      required: true
+  - type: textarea
+    id: exception
+    attributes:
+      label: Short redacted exception stack, if available
+      render: text
