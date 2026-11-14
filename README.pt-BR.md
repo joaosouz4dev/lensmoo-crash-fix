@@ -45,6 +45,10 @@ Mantenha o app aberto durante a gravação. O arquivo já é criado no celular; 
 
 Para salvar uma **foto**, abra **álbum** no LensFix, abra a imagem e toque no ícone de salvar/download no canto inferior esquerdo. No teste ela foi exportada para `Pictures/`.
 
+### Vídeo HD, áudio e atualização de firmware
+
+Os testes de 14/11/2026 confirmaram o microfone dos óculos separadamente por HFP/SCO e pelo fluxo Opus do protocolo. Com áudio do protocolo ativo, o pedido direto de abertura da câmera retornou **dispositivo ocupado**, sem quadros de vídeo. A tela oficial de atualização da unidade E13C-1, firmware 1.0.2, informou **Sem novas versões**. Não foi encontrado um firmware HD compatível nem um fluxo de maior resolução. **Vídeo HD com áudio ainda não foi resolvido**; o APK público continua com a gravação silenciosa em 320x240 descrita acima. Consulte [os testes de áudio](docs/AUDIO-RESEARCH.md), [a pesquisa de firmware](docs/FIRMWARE-RESEARCH.md) e [os limites da identificação do hardware](docs/HARDWARE-VARIANT.md).
+
 ## O que ainda não foi resolvido
 
 - O serviço StarBurst pode continuar repetindo o erro `ERROR_INVALID_KEY`. A correção de encerramento não remove essas tentativas nem recupera o serviço.

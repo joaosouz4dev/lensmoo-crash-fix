@@ -6,6 +6,8 @@ Análise de código e fontes primárias em 2026-11-13, complementada pelos teste
 
 Não foi encontrada uma rota comprovada de vídeo com resolução superior à prévia de 320x240 observada nesta investigação. Existe um comando distinto de gravação no protocolo usado pelo aplicativo, mas sua presença no SDK não comprova suporte, armazenamento ou resolução maior nesta unidade com firmware 1.0.2 e `noStorageDevice=1`.
 
+Em 14/11/2026, os testes de áudio confirmaram SCO e Opus pelo protocolo separadamente. O pedido direto de abertura da câmera com áudio do protocolo ativo retornou status 2, dispositivo ocupado, e zero quadros de vídeo. A consulta oficial mostrou Sem novas versões para o firmware 1.0.2. Vídeo HD com áudio permanece sem solução comprovada. Ver [resultados de áudio](AUDIO-RESEARCH.md), [consulta de firmware](FIRMWARE-RESEARCH.md) e [variante de hardware](HARDWARE-VARIANT.md).
+
 O aplicativo Android aceita esse modelo como dispositivo sem armazenamento e esconde controles de gravação e importação relacionados a mídia no dispositivo. A gravação MP4 adicionada ao LensFix salva o fluxo recebido pelo telefone. Ela não aumenta a resolução transmitida pela câmera.
 
 ## Teste físico comunicado pela investigação principal

@@ -46,6 +46,10 @@ Keep the app open while recording. The MP4 is created on the phone, so there is 
 
 For **photos**, open the LensFix **album**, open the image, and tap the lower-left save/download icon. The tested photo was exported to Android `Pictures/`.
 
+### HD video, audio and firmware investigation
+
+Tests on 14 November 2026 confirmed isolated glasses audio through HFP/SCO and the protocol Opus stream. With protocol audio active, a direct camera-opening request returned **device busy** and delivered no video frames. The tested E13C-1 firmware 1.0.2 also reported **no new firmware version** through its official update screen. No compatible HD firmware image or higher-resolution stream was found. **HD video with audio is not fixed**; the public APK remains the silent 320x240 recorder described above. See [audio test results](docs/AUDIO-RESEARCH.md), [firmware findings](docs/FIRMWARE-RESEARCH.md) and [hardware identification limits](docs/HARDWARE-VARIANT.md).
+
 ## Known limitations
 
 - StarBurst can continue returning `ERROR_INVALID_KEY` and retrying initialization. This release prevents the observed fatal thread error; it does not restore the vendor voice service or remove its retries.
